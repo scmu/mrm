@@ -32,7 +32,7 @@ infixr 20 _∔_
 ⟦_⟧ Kℕ A     = ℕ
 ⟦_⟧ KB A     = Bool
 ⟦_⟧ (F ∔ G) A = ⟦ F ⟧ A ⊎ ⟦ G ⟧ A
-⟦_⟧ (F ⋆ G) A = ⟦ F ⟧ A × ⟦ G ⟧ A 
+⟦_⟧ (F ⋆ G) A = ⟦ F ⟧ A × ⟦ G ⟧ A
 
 fmap : ∀ {A B} F → (A → B) → ⟦ F ⟧ A → ⟦ F ⟧ B
 fmap Id f = f
@@ -54,13 +54,13 @@ extract (here refl) (f , _ ) = f
 extract (there f∈ ) (f , fs) = extract f∈ fs
 
 data μ (Fs : List PolyF) : Set where
-  In : ∀ {F} → F ∈ Fs → ⟦ F ⟧ (μ Fs) → μ Fs 
+  In : ∀ {F} → F ∈ Fs → ⟦ F ⟧ (μ Fs) → μ Fs
 
 mutual
   fold : ∀ Fs {A} → Algebras Fs A → μ Fs → A
   fold Fs fs (In {F} F∈ x) = extract F∈ fs (mapFold Fs fs F x)
 
-  mapFold : (Fs : List PolyF) {A : Set} 
+  mapFold : (Fs : List PolyF) {A : Set}
           → Algebras Fs A → (G : PolyF) → ⟦ G ⟧ (μ Fs) → ⟦ G ⟧ A
   mapFold Fs fs Id       x          = fold Fs fs x
   mapFold Fs fs K1       b          = b
@@ -72,20 +72,20 @@ mutual
 
 mutual
 
- fold-universal : (Fs : List PolyF) → {A : Set} 
+ fold-universal : (Fs : List PolyF) → {A : Set}
                 → (h : μ Fs → A) → (fs : Algebras Fs A)
-                → (∀ F → (F∈ : F ∈ Fs) → 
+                → (∀ F → (F∈ : F ∈ Fs) →
                    ∀ xs → h (In F∈ xs) ≡ extract F∈ fs (fmap F h xs))
                 → (∀ xs → h xs ≡ fold Fs fs xs)
- fold-universal Fs h fs hom (In {F} F∈ xs) 
+ fold-universal Fs h fs hom (In {F} F∈ xs)
    rewrite hom F F∈ xs = cong (extract F∈ fs) (mapFold-univ Fs F h fs hom xs)
 
  mapFold-univ : (Fs : List PolyF) (G : PolyF)
-              → ∀ {A : Set} 
-              → (h : μ Fs → A) → (fs : Algebras Fs A) 
-              → (∀ F → (F∈ : F ∈ Fs) → 
+              → ∀ {A : Set}
+              → (h : μ Fs → A) → (fs : Algebras Fs A)
+              → (∀ F → (F∈ : F ∈ Fs) →
                    ∀ xs → h (In F∈ xs) ≡ extract F∈ fs (fmap F h xs))
-              → (Gxs : ⟦ G ⟧ (μ Fs)) 
+              → (Gxs : ⟦ G ⟧ (μ Fs))
               → fmap G h Gxs ≡ mapFold Fs fs G Gxs
  mapFold-univ Fs Id h fs hom xs = fold-universal Fs h fs hom xs
  mapFold-univ Fs K1 h fs hom tt = refl
@@ -93,6 +93,5 @@ mutual
  mapFold-univ Fs KB h fs hom b = refl
  mapFold-univ Fs (G₁ ∔ G₂) h fs hom (inj₁ x) = cong inj₁ (mapFold-univ Fs G₁ h fs hom x)
  mapFold-univ Fs (G₁ ∔ G₂) h fs hom (inj₂ y) = cong inj₂ (mapFold-univ Fs G₂ h fs hom y)
- mapFold-univ Fs (G₁ ⋆ G₂) h fs hom (x , y) 
+ mapFold-univ Fs (G₁ ⋆ G₂) h fs hom (x , y)
      rewrite mapFold-univ Fs G₁ h fs hom x | mapFold-univ Fs G₂ h fs hom y = refl
-

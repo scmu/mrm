@@ -1,55 +1,53 @@
-> {-# LANGUAGE
->  DataKinds, KindSignatures, GADTs, TypeOperators, RankNTypes,
->  DeriveFunctor, DeriveFoldable, DeriveTraversable, StandaloneDeriving,
->  MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
->  UndecidableInstances, OverlappingInstances, NoMonomorphismRestriction, 
->  FunctionalDependencies, ScopedTypeVariables
->  #-}
+{-# LANGUAGE
+ DataKinds, KindSignatures, GADTs, TypeOperators, RankNTypes,
+ DeriveFunctor, DeriveFoldable, DeriveTraversable, StandaloneDeriving,
+ MultiParamTypeClasses, FlexibleInstances, FlexibleContexts,
+ UndecidableInstances, OverlappingInstances, NoMonomorphismRestriction,
+ FunctionalDependencies, ScopedTypeVariables
+ #-}
 
-> module MRM.FListProps where
+module MRM.FListProps where
 
-> import Data.Foldable hiding (fold, elem)
-> import Data.Traversable
+import Data.Foldable hiding (fold, elem)
+import Data.Traversable
 
+data FList (fs :: [* -> *]) where
+ FNil :: FList '[]
+ FCons :: (Functor f) => FList fs -> FList (f ': fs)
 
+class Functors (fs :: [* -> *]) where
+ frep :: FList fs
 
-> data FList (fs :: [* -> *]) where
->  FNil :: FList '[]
->  FCons :: (Functor f) => FList fs -> FList (f ': fs)
+instance Functors '[] where
+ frep = FNil
 
-> class Functors (fs :: [* -> *]) where
->  frep :: FList fs
+instance (Functor f, Functors fs) => Functors (f ': fs) where
+ frep = FCons frep
 
-> instance Functors '[] where
->  frep = FNil
+data FFList (fs :: [* -> *]) where
+ FFNil :: FFList '[]
+ FFCons :: (Functor f, Foldable f) => FFList fs -> FFList (f ': fs)
 
-> instance (Functor f, Functors fs) => Functors (f ': fs) where
->  frep = FCons frep
+class Foldables (fs :: [* -> *]) where
+  ffrep :: FFList fs
 
-> data FFList (fs :: [* -> *]) where
->  FFNil :: FFList '[]
->  FFCons :: (Functor f, Foldable f) => FFList fs -> FFList (f ': fs)
+instance Foldables ('[]) where
+  ffrep = FFNil
 
-> class Foldables (fs :: [* -> *]) where
->   ffrep :: FFList fs
+instance  (Functor f, Foldable f, Foldables fs) =>
+          Foldables (f ': fs) where
+  ffrep = FFCons ffrep
 
-> instance Foldables ('[]) where
->   ffrep = FFNil
+data TList (fs :: [* -> *]) where
+  TNil :: TList '[]
+  TCons :: Traversable f => TList fs -> TList (f ': fs)
 
-> instance  (Functor f, Foldable f, Foldables fs) => 
->           Foldables (f ': fs) where
->   ffrep = FFCons ffrep
+class Traversables (fs :: [* -> *]) where
+  trep :: TList fs
 
-> data TList (fs :: [* -> *]) where
->   TNil :: TList '[]
->   TCons :: Traversable f => TList fs -> TList (f ': fs)
+instance Traversables ('[]) where
+  trep = TNil
 
-> class Traversables (fs :: [* -> *]) where
->   trep :: TList fs
-
-> instance Traversables ('[]) where
->   trep = TNil
-
-> instance  (Traversable f, Traversables fs) => 
->           Traversables (f ': fs) where
->   trep = TCons trep
+instance  (Traversable f, Traversables fs) =>
+          Traversables (f ': fs) where
+  trep = TCons trep
