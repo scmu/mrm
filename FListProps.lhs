@@ -11,7 +11,7 @@
 > import Data.Foldable hiding (fold, elem)
 > import Data.Traversable
 
-Other "for-all" properties of Matches.
+
 
 > data FList (fs :: [* -> *]) where
 >  FNil :: FList '[]

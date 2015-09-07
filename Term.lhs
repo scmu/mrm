@@ -40,7 +40,7 @@
 
 > type Expr = Fix ExprFunctors
 
-Example: variable renaming.
+
 
 > renameAlg ::  (fs <: gs, Mem Var fs, Mem Var gs) =>
 >               Algebras fs (Fix gs)
@@ -49,7 +49,7 @@ Example: variable renaming.
 > rename :: (fs <: fs, Mem Var fs) => Fix fs -> Fix fs
 > rename = fold renameAlg
 
-Example: desugaring.
+
 
 > desugarAlg ::  (fs <: gs, Mem App gs, Mem Lam gs) =>
 >                Algebras (Let :- fs) (Fix gs)
@@ -60,7 +60,7 @@ Example: desugaring.
 >             Fix (Let :- fs) -> Fix fs
 > desugar = fold desugarAlg
 
-Example: substitution.
+
 
 > substMatch :: (fs <: fs, Mem Var fs, Mem Lam fs) =>
 >   String -> Fix fs -> Matches fs (Fix fs, Fix fs) (Fix fs)
@@ -74,7 +74,7 @@ Example: substitution.
 >           String -> Fix fs -> Fix fs -> Fix fs
 > subst v t = para (substMatch v t)
 
-Example: free variables.
+
 
 
 > fVarsAlg :: (Foldables fs, Mem Var fs, Mem Lam fs, Mem Let fs) =>
@@ -89,7 +89,7 @@ Example: free variables.
 >   Fix fs -> [VName]
 > freeVars = fold fVarsAlg
 
-Example: de Bruijn.
+
 
 > data Lam' x = Lam' x
 
@@ -117,7 +117,7 @@ Example: de Bruijn.
 > position x (y:xs) | x == y = Just 0
 >                   | otherwise = fmap (1+) (position x xs)
 
-Printing an expression. For debugging.
+
 
 > showAlg :: (fs <: '[Lam, Var, Let, App]) => Algebras fs String
 > showAlg = subMatches $
@@ -130,7 +130,7 @@ Printing an expression. For debugging.
 
 > showExpr = fold showAlg
 
-instances
+
 
 > deriving instance Show x => Show (Lam x)
 > deriving instance Show x => Show (Var x)

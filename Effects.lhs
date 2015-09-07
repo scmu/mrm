@@ -25,14 +25,14 @@
 > transFreeSym = Free ^<< transAlg' (SCons Here (subSub srep)) <<^ getFix
 
 
-Monad Instance
+
 
 > instance (fs <: fs) => Monad (Free fs) where
 >   return         = Free . inn . Pure
 >   (Free p) >>= f = fold (  (\ (Pure x) -> f x) :::
 >                            transFree ) p
 
-Applicative instance, lest GHC complains
+
 
 > instance (Monad (Free fs), Functor (Free fs)) => Applicative (Free fs) where
 >   pure = return
@@ -45,7 +45,7 @@ Applicative instance, lest GHC complains
 > runPure :: Free '[] a -> a
 > runPure = match ((\ (Pure x) -> x) ::: Void) . getFix
 
-Effects.
+
 
 > data State s   x  = Get (s -> x) | Put s x
 > data Nondet    x  = Or x x
@@ -94,7 +94,7 @@ Effects.
 >          <<^ (getFix .)
 
 
-Sample Progarm
+
 
 > dec ::  (  Mem (State Int) fs, Mem Nondet fs, 
 >            Mem (Except String) fs, fs <: fs) => Free fs ()
@@ -102,7 +102,7 @@ Sample Progarm
 >           if n < 0 then throw "negative" 
 >           else do {i <- choose 1 2; put (n + i)}
 
-Instance derivations
+
 
 > deriving instance Functor (Pure a)
 > deriving instance Functor Nondet

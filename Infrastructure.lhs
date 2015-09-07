@@ -29,7 +29,7 @@
 
 > infixr 6 :-
 
-Fixpoint of list-of-functors.
+
 
 > data Fix (fs :: [* -> *]) where
 >   In :: Functor f => Elem f fs -> f (Fix fs) -> Fix fs
@@ -48,7 +48,7 @@ Fixpoint of list-of-functors.
 > inn :: (Mem f fs, Functor f) => f (Fix fs) -> Fix fs
 > inn = In witness
 
-Matches and algebras.
+
 
 > data Matches (fs :: [* -> *]) (a :: *) (b :: *) where
 >   Void   :: Matches '[] a b
@@ -105,7 +105,7 @@ Matches and algebras.
 > constMatches2 :: Functors fs => b -> Matches fs a b
 > constMatches2 y = generateMatches2 (\_ -> y) frep
 
-Algebras, fold, paramorphism.
+
 
 > type Algebras fs a = Matches fs a a
 
@@ -115,12 +115,12 @@ Algebras, fold, paramorphism.
 > para :: (fs <: fs) => Matches fs (a, Fix fs) a -> Fix fs -> a
 > para ks = fst . fold (ks &&& (inns <<^ snd))
 
-Mendler-style fold.
+
 
 > mfold :: (forall r. (r -> a) -> Matches gs r a) -> Fix gs -> a
 > mfold f (In pos xs) = extractAt pos (f (mfold f)) xs
 
-Subtyping
+
 
 > data Sub (fs :: [* -> *]) (gs :: [* -> *]) where
 >   SNil   ::  Sub '[] gs
@@ -133,7 +133,7 @@ Subtyping
 
 > instance '[] <: gs where
 >   srep = SNil
- 
+
 > instance  (Functor f, Mem f gs, fs <: gs) => 
 >           (f :- fs) <: gs where
 >   srep = SCons witness srep
@@ -146,7 +146,7 @@ Subtyping
 > subSub SNil            = SNil
 > subSub (SCons pos ss)  = SCons (There pos) (subSub ss)
 
-Subtype matches and operations.
+
 
 > subFix :: (fs <: gs) => Fix fs -> Fix gs
 > subFix = fold transAlg
@@ -171,7 +171,7 @@ Subtype matches and operations.
 > subMatches :: (fs <: gs) => Matches gs r a -> Matches fs r a
 > subMatches = subMatches' srep
 
-Simple operations.
+
 
 > (<<^) :: Matches fs b c -> (a -> b) -> Matches fs a c
 > Void <<^ g        = Void

@@ -12,7 +12,7 @@
 > import MRM.Infrastructure
 > import MRM.Term
 
-A quadratic-time algorithm, as in Lammel and Vissor.
+
 
 > cfeAlg1 ::  (Foldables fs, fs <: fs, 
 >              Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) => 
@@ -31,11 +31,11 @@ A quadratic-time algorithm, as in Lammel and Vissor.
 >         Fix fs -> Fix fs
 > cfe1 = fold cfeAlg1
 
-We can also take advantage of the view patterns and the pattern
-synonyms that GHC provides to hide calls to |match| and program
-in direct style. Let |LamP| be the following pattern where
+
+
+
 |prj :: (fs <: fs, Mem f fs) => Fix fs -> Maybe (f (Fix fs))| tries
-to match the top level of the input.
+
 
 > pattern LamP x body <- (prj -> Just (Lam x body))
 
@@ -48,7 +48,7 @@ to match the top level of the input.
 >            transAlg
 >   where x `freeIn` body = not (x `elem` freeVars body)
 
-Going one step further, we can also use built-in recursion.
+
 
 > pattern AppP e1 e2 <- (prj -> Just (App e1 e2))
 
@@ -60,9 +60,9 @@ Going one step further, we can also use built-in recursion.
 >   where x `freeIn` body = not (x `elem` freeVars body)
 > cfe3 (In pos gx)        = In pos (fmap cfe3 gx)
 
-Given an algebra |ks :: Algebras fs a|, |annotate ks| computes
-the result of |fold ks|, as well, as annotating each subtree with
-the termporary result.
+
+
+
 
 > data Anno a x = Anno a x
 
@@ -90,7 +90,7 @@ the termporary result.
 > unannotate = fold unannoAlg
 >   where unannoAlg = (\(Anno _ xs) -> xs) ::: transAlg
 
-Solving CFE.
+
 
 > type TermF = '[Var, App, Lam, Let]
 > type TermAF = Anno [VName] ': TermF
@@ -106,11 +106,11 @@ Solving CFE.
 > cfe2 :: Term -> Term
 > cfe2 = unannotate . elim . fst . annotate fVarsAlg
 
-instances
+
 
 > deriving instance Functor (Anno a)
 
-testing
+
 
 > e0 :: Term
 > e0 = ((lam "x" (lam "y" (var "z")) `app` var "w") `app` var "k")
