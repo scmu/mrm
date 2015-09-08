@@ -12,17 +12,18 @@ module CFE where
 import Data.Matches
 import Term
 
-cfeAlg1 ::  (Foldables fs, fs <: fs,
-             Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) =>
-            Algebras fs (Fix fs)
-cfeAlg1 =  (\(App e1 e2) ->
-             if isCF e1 then extractBody e1
-                        else app e1 e2) >::
-           transAlg
- where extractBody =
-        match ((\(Lam x body) -> body) >:: transAlg)
-       isCF = match ((\(Lam x body) -> not (x `elem` freeVars body)) >::
-                     constMatches False)
+cfeAlg1 :: (Foldables fs, fs <: fs,
+            Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) =>
+           Algebras fs (Fix fs)
+cfeAlg1 =
+    (\(App e1 e2) ->
+        if isCF e1 then extractBody e1
+                   else app e1 e2) >::
+    transAlg
+    where extractBody =
+          match ((\(Lam x body) -> body) >:: transAlg)
+          isCF = match ((\(Lam x body) -> not (x `elem` freeVars body)) >::
+                        constMatches False)
 
 cfe1 :: (Foldables fs, Mem Var fs, Mem App fs, Mem Lam fs,
          Mem Let fs, fs <: fs) =>
@@ -31,14 +32,15 @@ cfe1 = fold cfeAlg1
 
 pattern LamP x body <- (prj -> Just (Lam x body))
 
-cfeAlg2 ::  (Foldables fs, fs <: fs,
-             Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) =>
-            Algebras fs (Fix fs)
-cfeAlg2 =  (\case
-              App (LamP x body) e2 | x `freeIn` body -> body
-              App e1 e2                              -> app e1 e2) >::
-           transAlg
-  where x `freeIn` body = not (x `elem` freeVars body)
+cfeAlg2 :: (Foldables fs, fs <: fs,
+            Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) =>
+           Algebras fs (Fix fs)
+cfeAlg2 =
+    (\case
+        App (LamP x body) e2 | x `freeIn` body -> body
+        App e1 e2                              -> app e1 e2) >::
+    transAlg
+    where x `freeIn` body = not (x `elem` freeVars body)
 
 pattern AppP e1 e2 <- (prj -> Just (App e1 e2))
 
@@ -55,12 +57,11 @@ data Anno a x = Anno a x
 anno :: Mem (Anno a) fs => a -> Fix fs -> Fix fs
 anno a x = inn (Anno a x)
 
-annoAlg :: (Mem (Anno a) gs) =>
-           Sub fs gs -> Algebras fs a -> Algebras fs (Fix gs, a)
+annoAlg :: (Mem (Anno a) gs) => Sub fs gs -> Algebras fs a -> Algebras fs (Fix gs, a)
 annoAlg SNil Void = Void
 annoAlg (SCons pos ss) (k ::: ks) =
   (\xs -> let y = k (fmap snd xs)
-          in (anno y (In pos (fmap fst xs)) , y)) ::: annoAlg ss ks
+          in (anno y (In pos (fmap fst xs)), y)) ::: annoAlg ss ks
 
 annotate :: (Mem (Anno a) gs, fs <: gs) =>
             Algebras fs a -> Fix fs -> (Fix gs, a)
@@ -74,7 +75,7 @@ getAnno xs = match ((\(Anno y xs) -> y) >:: undefs) xs
 
 unannotate :: (fs <: fs) => Fix (Anno a ': fs) -> Fix fs
 unannotate = fold unannoAlg
-  where unannoAlg = (\(Anno _ xs) -> xs) ::: transAlg
+    where unannoAlg = (\(Anno _ xs) -> xs) ::: transAlg
 
 type TermF = '[Var, App, Lam, Let]
 type TermAF = Anno [VName] ': TermF
@@ -99,7 +100,6 @@ e1 :: Term
 e1 = (lam "x" (var "y"))
 
 showAlg2 :: Algebras TermAF String
-showAlg2 = (\(Anno y xs) -> "(Anno " ++ show y ++ " " ++ xs ++ ")")
-    ::: showAlg
+showAlg2 = (\(Anno y xs) -> "(Anno " ++ show y ++ " " ++ xs ++ ")") ::: showAlg
 
 showExpr2 = fold showAlg2

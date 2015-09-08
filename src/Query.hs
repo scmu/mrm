@@ -12,10 +12,9 @@ import Data.Monoid
 
 import Data.Matches
 
-queryMapMatch :: Monoid b =>
- FFList fs -> (a -> b) -> Matches fs a b
-queryMapMatch FFNil k        = Void
-queryMapMatch (FFCons xs) k  = foldMap k ::: queryMapMatch xs k
+queryMapMatch :: Monoid b => FFList fs -> (a -> b) -> Matches fs a b
+queryMapMatch FFNil k       = Void
+queryMapMatch (FFCons xs) k = foldMap k ::: queryMapMatch xs k
 
 queryAlg :: (Monoid a, Foldables fs) => Algebras fs a
 queryAlg = queryMapMatch ffrep id

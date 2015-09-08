@@ -12,42 +12,40 @@ import Data.Foldable hiding (fold, elem)
 import Data.Traversable
 
 data FList (fs :: [* -> *]) where
- FNil :: FList '[]
- FCons :: (Functor f) => FList fs -> FList (f ': fs)
+    FNil :: FList '[]
+    FCons :: (Functor f) => FList fs -> FList (f ': fs)
 
 class Functors (fs :: [* -> *]) where
- frep :: FList fs
+    frep :: FList fs
 
 instance Functors '[] where
- frep = FNil
+    frep = FNil
 
 instance (Functor f, Functors fs) => Functors (f ': fs) where
- frep = FCons frep
+    frep = FCons frep
 
 data FFList (fs :: [* -> *]) where
- FFNil :: FFList '[]
- FFCons :: (Functor f, Foldable f) => FFList fs -> FFList (f ': fs)
+    FFNil :: FFList '[]
+    FFCons :: (Functor f, Foldable f) => FFList fs -> FFList (f ': fs)
 
 class Foldables (fs :: [* -> *]) where
-  ffrep :: FFList fs
+    ffrep :: FFList fs
 
 instance Foldables ('[]) where
-  ffrep = FFNil
+    ffrep = FFNil
 
-instance  (Functor f, Foldable f, Foldables fs) =>
-          Foldables (f ': fs) where
-  ffrep = FFCons ffrep
+instance (Functor f, Foldable f, Foldables fs) => Foldables (f ': fs) where
+    ffrep = FFCons ffrep
 
 data TList (fs :: [* -> *]) where
-  TNil :: TList '[]
-  TCons :: Traversable f => TList fs -> TList (f ': fs)
+    TNil :: TList '[]
+    TCons :: Traversable f => TList fs -> TList (f ': fs)
 
 class Traversables (fs :: [* -> *]) where
-  trep :: TList fs
+    trep :: TList fs
 
 instance Traversables ('[]) where
-  trep = TNil
+    trep = TNil
 
-instance  (Traversable f, Traversables fs) =>
-          Traversables (f ': fs) where
-  trep = TCons trep
+instance (Traversable f, Traversables fs) => Traversables (f ': fs) where
+    trep = TCons trep
