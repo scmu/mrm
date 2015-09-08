@@ -5,12 +5,12 @@
  UndecidableInstances, OverlappingInstances, NoMonomorphismRestriction, LambdaCase, StandaloneDeriving
  #-}
 
-module MRM.Query where
+module Query where
 
 import Data.Foldable hiding (fold, elem)
 import Data.Monoid
 
-import MRM.Infrastructure
+import Data.Matches
 
 queryMapMatch :: Monoid b =>
  FFList fs -> (a -> b) -> Matches fs a b

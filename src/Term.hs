@@ -5,7 +5,7 @@
  UndecidableInstances, OverlappingInstances, NoMonomorphismRestriction, LambdaCase, StandaloneDeriving
  #-}
 
-module MRM.Term where
+module Term where
 
 import Data.Foldable hiding (fold, elem)
 import Data.Traversable
@@ -13,9 +13,9 @@ import Control.Monad (MonadPlus(..), liftM, mzero)
 import Control.Monad.Reader (runReaderT)
 import Control.Monad.Reader.Class
 
-import MRM.Infrastructure
-import MRM.Query
-import MRM.Monadic
+import Data.Matches
+import Query
+import Monadic
 
 type VName = String
 

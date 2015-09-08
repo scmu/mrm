@@ -6,10 +6,10 @@
  FunctionalDependencies, ScopedTypeVariables
  #-}
 
-module MRM.Para where
+module Para where
 
-import MRM.Infrastructure
-import MRM.Term
+import Data.Matches
+import Term
 
 {- A reviewer raised the question: in the function "subst",
    is it possible *not* to apply subsitution to the subexpression?

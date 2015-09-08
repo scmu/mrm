@@ -5,13 +5,13 @@
  UndecidableInstances, OverlappingInstances, NoMonomorphismRestriction, LambdaCase, StandaloneDeriving
  #-}
 
-module MRM.Monadic where
+module Monadic where
 
 import Prelude hiding (sequence)
 import Data.Traversable
 import Control.Monad hiding (sequence)
 
-import MRM.Infrastructure
+import Data.Matches
 
 mlift' :: Monad m => TList fs  -> Matches fs a b
                                -> Matches fs (m a) (m b)

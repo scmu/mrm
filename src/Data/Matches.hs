@@ -6,7 +6,7 @@
  FunctionalDependencies, ScopedTypeVariables
  #-}
 
-module MRM.Infrastructure
+module Data.Matches
        (Fix(In), Elem(..), Mem(..), (:-), inn, inns,
         Matches((:::), Void), Algebras, extractAt, match,
         overrideAt, (>::), prj, fold, para,
@@ -18,12 +18,12 @@ module MRM.Infrastructure
         (<<^), (^<<), (&&&), Union(..),
         FList(..), Functors(..), FFList(..), Foldables(..),
         TList(..), Traversables(..),
-        module MRM.FListProps) where
+        module Data.Matches.FListProps) where
 
 import Data.Foldable hiding (fold, elem)
 import Data.Traversable
 
-import MRM.FListProps
+import Data.Matches.FListProps
 
 type (f :: * -> *) :- (fs :: [* -> *]) = f ': fs
 

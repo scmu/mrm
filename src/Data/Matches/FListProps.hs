@@ -6,7 +6,7 @@
  FunctionalDependencies, ScopedTypeVariables
  #-}
 
-module MRM.FListProps where
+module Data.Matches.FListProps where
 
 import Data.Foldable hiding (fold, elem)
 import Data.Traversable

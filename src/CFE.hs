@@ -7,10 +7,10 @@
  ViewPatterns, PatternSynonyms
  #-}
 
-module MRM.CFE where
+module CFE where
 
-import MRM.Infrastructure
-import MRM.Term
+import Data.Matches
+import Term
 
 cfeAlg1 ::  (Foldables fs, fs <: fs,
              Mem Var fs, Mem App fs, Mem Lam fs, Mem Let fs) =>

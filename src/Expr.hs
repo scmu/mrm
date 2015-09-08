@@ -6,10 +6,10 @@
  LambdaCase
  #-}
 
-module MRM.Expr where
+module Expr where
 
 import Control.Monad.Reader hiding (sequence)
-import MRM.Infrastructure
+import Data.Matches
 
 data ArithF x  = Num Int | Add x x deriving Functor
 

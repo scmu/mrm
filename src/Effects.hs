@@ -4,12 +4,12 @@
  FlexibleContexts, DeriveFunctor, LambdaCase, StandaloneDeriving
  #-}
 
-module MRM.Effects where
+module Effects where
 
 import Control.Applicative
 import Control.Monad (liftM2, ap)
 
-import MRM.Infrastructure
+import Data.Matches
 
 data Pure a x = Pure a
 
