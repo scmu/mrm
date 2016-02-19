@@ -52,6 +52,16 @@ infixr 5 &&&
 
 type Algebras fs a = Match fs a a
 
+inns :: (fs <: fs) => Algebras fs (Fix fs)
+inns = transAlg
+
+transAlgWith :: Sub fs gs -> Algebras fs (Fix gs)
+transAlgWith SNil           = Void
+transAlgWith (SCons pos xs) = In pos ::: transAlgWith xs
+
+transAlg :: (fs <: gs) => Algebras fs (Fix gs)
+transAlg = transAlgWith srep
+
 fold :: Algebras fs a -> Fix fs -> a
 fold ks (In pos xs) = extractAt pos ks (fmap (fold ks) xs)
 
@@ -61,21 +71,11 @@ para ks = fst . fold (ks &&& (inns <<^ snd))
 mfold :: (forall r. (r -> a) -> Match gs r a) -> Fix gs -> a
 mfold f (In pos xs) = extractAt pos (f (mfold f)) xs
 
-subFix :: (fs <: gs) => Fix fs -> Fix gs
-subFix = fold transAlg
-
-transAlgWith :: Sub fs gs -> Algebras fs (Fix gs)
-transAlgWith SNil           = Void
-transAlgWith (SCons pos xs) = In pos ::: transAlgWith xs
-
-transAlg :: (fs <: gs) => Algebras fs (Fix gs)
-transAlg = transAlgWith srep
-
-inns :: (fs <: fs) => Algebras fs (Fix fs)
-inns = transAlg
-
 subOp :: (fs <: gs) => (Fix gs -> c) -> Fix fs -> c
 subOp f = f . subFix
+
+subFix :: (fs <: gs) => Fix fs -> Fix gs
+subFix = fold transAlg
 
 subMatchWith :: Sub fs gs -> Match gs r a -> Match fs r a
 subMatchWith SNil           _  = Void
