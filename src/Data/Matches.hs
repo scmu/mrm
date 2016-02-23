@@ -7,7 +7,7 @@
  #-}
 
 module Data.Matches
-       (Fix(In), Elem(..), Mem(..), (':), inn, inns,
+       (Fix(In), Elem(..), Mem(..), inn, inns,
         Matches((:::), Void), Algebras, extractAt, match,
         overrideAt, (>::), prj, fold, para,
         undefs, generateMatches, generateMatches',
@@ -58,7 +58,7 @@ overrideAt :: Elem f fs -> (f a -> b) -> Matches fs a b -> Matches fs a b
 overrideAt Here        g (_ ::: fs) = g ::: fs
 overrideAt (There pos) g (f ::: fs) = f ::: overrideAt pos g fs
 
-(>::) :: Mem f fs =>  (f a -> b) -> sMatches fs a b -> Matches fs a b
+(>::) :: Mem f fs =>  (f a -> b) -> Matches fs a b -> Matches fs a b
 (>::) = overrideAt witness
 
 prj :: (fs <: fs, Mem f fs) => Fix fs -> Maybe (f (Fix fs))
