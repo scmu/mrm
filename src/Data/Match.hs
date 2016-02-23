@@ -32,8 +32,12 @@ overrideAt (There pos) g (f ::: fs) = f ::: overrideAt pos g fs
 
 infixr 6 >::
 
-match :: Match fs (Fix fs) b -> Fix fs -> b
-match fs (In pos xs) = extractAt pos fs xs
+fromFunctionWith :: (forall f. Functor f => Elem f fs -> f a -> b) -> Sub gs fs -> Match gs a b
+fromFunctionWith f SNil = Void
+fromFunctionWith f (SCons pos ss) = f pos ::: fromFunctionWith f ss
+
+fromFunction :: (fs <: fs) => (forall f. Functor f => Elem f fs -> f a -> b) -> Match fs a b
+fromFunction f = fromFunctionWith f srep
 
 (<<^) :: Match fs b c -> (a -> b) -> Match fs a c
 Void <<^ g       = Void
@@ -49,6 +53,12 @@ Void &&& Void = Void
 
 infixr 7 <<^, ^<<
 infixr 5 &&&
+
+match :: Match fs (Fix fs) b -> Fix fs -> b
+match fs (In pos xs) = extractAt pos fs xs
+
+prj :: (Mem f fs, fs <: fs) => Fix fs -> Maybe (f (Fix fs))
+prj = match (Just >:: fromFunction (\pos -> const Nothing))
 
 type Algebras fs a = Match fs a a
 
