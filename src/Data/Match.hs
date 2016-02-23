@@ -7,6 +7,11 @@
   #-}
 
 module Data.Match
+  ( module Data.Match
+  , module Data.Match.Fix
+  , module Data.Match.Membership
+  , module Data.Match.Subset
+  )
 where
 
 import Data.Match.Fix
