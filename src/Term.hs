@@ -13,9 +13,10 @@ import Control.Monad (MonadPlus(..), liftM, mzero)
 import Control.Monad.Reader (runReaderT)
 import Control.Monad.Reader.Class
 
-import Data.Matches
-import Query
-import Monadic
+import Data.ConstrainedList
+import Data.Match
+import Data.Match.Query
+import Data.Match.Monadic
 
 type VName = String
 
@@ -54,7 +55,7 @@ desugarAlg =
 desugar :: (fs <: fs, Mem App fs, Mem Lam fs) => Fix (Let ': fs) -> Fix fs
 desugar = fold desugarAlg
 
-substMatch :: (fs <: fs, Mem Var fs, Mem Lam fs) => String -> Fix fs -> Matches fs (Fix fs, Fix fs) (Fix fs)
+substMatch :: (fs <: fs, Mem Var fs, Mem Lam fs) => String -> Fix fs -> Match fs (Fix fs, Fix fs) (Fix fs)
 substMatch v t =
     (\(Var w)        -> if (v == w) then t else var w)          >::
     (\(Lam w (e',e)) -> if (v == w) then lam w e else lam w e') >::
@@ -63,7 +64,7 @@ substMatch v t =
 subst :: (fs <: fs, Mem Var fs, Mem Lam fs) => String -> Fix fs -> Fix fs -> Fix fs
 subst v t = para (substMatch v t)
 
-fVarsAlg :: (Foldables fs, Mem Var fs, Mem Lam fs, Mem Let fs) => sAlgebras fs [VName]
+fVarsAlg :: (Foldables fs, Mem Var fs, Mem Lam fs, Mem Let fs) => Algebras fs [VName]
 fVarsAlg =
     (\(Var x) -> [x]) >::
     (\(Lam x vs) -> vs `setminus` x) >::
@@ -101,7 +102,7 @@ position x (y:xs) | x == y    = Just 0
                   | otherwise = fmap (1+) (position x xs)
 
 showAlg :: (fs <: '[Lam, Var, Let, App]) => Algebras fs String
-showAlg = subMatches $
+showAlg = subMatch $
     (\(Lam x e) -> "(\\" ++ x ++ " -> " ++ e ++")") :::
     (\(Var x) -> x) :::
     (\(Let x e1 e2) ->

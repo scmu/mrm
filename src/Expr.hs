@@ -9,7 +9,7 @@
 module Expr where
 
 import Control.Monad.Reader hiding (sequence)
-import Data.Matches
+import Data.Match
 
 data ArithF x  = Num Int | Add x x deriving Functor
 
@@ -71,7 +71,7 @@ geval :: Eval fs => Fix fs -> Val
 geval = fold evalAlg
 
 class Eval fs where
-    evalAlg :: Matches fs Val Val
+    evalAlg :: Match fs Val Val
 
 instance Eval ('[]) where
     evalAlg = Void

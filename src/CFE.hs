@@ -9,7 +9,8 @@
 
 module CFE where
 
-import Data.Matches
+import Data.ConstrainedList
+import Data.Match
 import Term
 
 cfeAlg1 :: (Foldables fs, fs <: fs,
@@ -20,10 +21,9 @@ cfeAlg1 =
         if isCF e1 then extractBody e1
                    else app e1 e2) >::
     transAlg
-    where extractBody =
-          match ((\(Lam x body) -> body) >:: transAlg)
+    where extractBody = match ((\(Lam x body) -> body) >:: transAlg)
           isCF = match ((\(Lam x body) -> not (x `elem` freeVars body)) >::
-                        constMatches False)
+                        fromFunction (\pos -> const False))
 
 cfe1 :: (Foldables fs, Mem Var fs, Mem App fs, Mem Lam fs,
          Mem Let fs, fs <: fs) =>
@@ -67,11 +67,11 @@ annotate :: (Mem (Anno a) gs, fs <: gs) =>
             Algebras fs a -> Fix fs -> (Fix gs, a)
 annotate ks = fold (annoAlg srep ks)
 
-getData :: (Functors fs) => Fix (Anno a ': fs) -> Fix (Anno a ': fs)
-getData xs = match ((\(Anno y zs) -> zs) ::: undefs) xs
+getData :: (fs <: fs) => Fix (Anno a ': fs) -> Fix (Anno a ': fs)
+getData xs = match ((\(Anno y zs) -> zs) ::: fromFunction (\pos -> const undefined)) xs
 
-getAnno :: (Functors fs, Mem (Anno a) fs) => Fix fs -> a
-getAnno xs = match ((\(Anno y xs) -> y) >:: undefs) xs
+getAnno :: (fs <: fs, Mem (Anno a) fs) => Fix fs -> a
+getAnno xs = match ((\(Anno y xs) -> y) >:: fromFunction (\pos -> const undefined)) xs
 
 unannotate :: (fs <: fs) => Fix (Anno a ': fs) -> Fix fs
 unannotate = fold unannoAlg
