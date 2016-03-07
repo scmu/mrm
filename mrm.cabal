@@ -18,7 +18,7 @@ homepage:            https://github.com/scmu/mrm
 license:             BSD3
 license-file:        LICENSE
 author:              brunosoliveira, scmu, suhorng
-maintainer:          suhorng@gmail.com
+maintainer:          suhorng AT gmail DOT com
 copyright:           Copyright (c) 2016, brunosoliveira, scmu, suhorng
 category:            Data
 build-type:          Simple
