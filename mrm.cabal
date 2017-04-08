@@ -24,6 +24,7 @@ category:            Data
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
+tested-with:         GHC==8.0.2, GHC==7.10.3, GHC==7.8.4
 
 source-repository head
   type:                 git
@@ -31,7 +32,7 @@ source-repository head
 
 library
   hs-source-dirs:      src
-  build-depends:       base >=4.7 && <4.8
+  build-depends:       base >=4.7 && <5.0
   other-extensions:    GADTs
   exposed-modules:     Data.Match,
                        Data.ConstrainedList,

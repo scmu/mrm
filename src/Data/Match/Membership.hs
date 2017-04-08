@@ -1,12 +1,16 @@
 {-# LANGUAGE
-    GADTs
+    CPP
+  , GADTs
   , KindSignatures
   , DataKinds
   , TypeOperators
   , MultiParamTypeClasses
   , FlexibleInstances
-  , OverlappingInstances
   #-}
+
+#if __GLASGOW_HASKELL__ < 710
+{-# LANGUAGE OverlappingInstances #-}
+#endif
 
 module Data.Match.Membership
   ( Elem(..)
@@ -24,5 +28,9 @@ class Mem f fs where
 instance Mem f (f ': fs) where
     witness = Here
 
-instance (Mem f fs) => Mem f (g ': fs) where
+instance
+#if __GLASGOW_HASKELL__ >= 710
+  {-# OVERLAPPABLE #-}
+#endif
+  (Mem f fs) => Mem f (g ': fs) where
     witness = There witness
