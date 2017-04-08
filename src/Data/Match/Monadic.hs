@@ -7,7 +7,7 @@ module Data.Match.Monadic where
 
 import Data.Match (Algebras, Match(..), fold, transAlg)
 import Data.Match.Fix (Fix())
-import Data.Match.Subset ((<:)(..))
+import Data.Match.Subset (type (<:)(..))
 import Data.ConstrainedList (TraversableList(..), Traversables(trep))
 
 import Prelude hiding (sequence)

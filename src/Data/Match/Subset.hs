@@ -5,7 +5,6 @@
   , TypeOperators
   , MultiParamTypeClasses
   , FlexibleInstances
-  , OverlappingInstances
   #-}
 
 module Data.Match.Subset where
