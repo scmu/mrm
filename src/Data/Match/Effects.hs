@@ -30,10 +30,14 @@ transFree = Free ^<< transAlgWith (subSub srep) <<^ getFix
 transFreeSym :: (fs <: gs) => Algebras (Pure a ': fs) (Free gs a)
 transFreeSym = Free ^<< transAlgWith (SCons Here (subSub srep)) <<^ getFix
 
+instance (fs <: fs) => Functor (Free fs) where
+    fmap f = fold ((\(Pure x) -> Free (inn (Pure (f x)))) ::: transFree) . getFix
+
 instance (fs <: fs) => Monad (Free fs) where
     return         = Free . inn . Pure
     (Free p) >>= f = fold ((\(Pure x) -> f x) :::
                            transFree) p
+
 instance (Monad (Free fs), Functor (Free fs)) => Applicative (Free fs) where
     pure = return
     (<*>) = ap
